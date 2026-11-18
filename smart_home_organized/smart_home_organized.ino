@@ -322,6 +322,10 @@ void loop() {
 
     digitalWrite(fanPin, fanOn ? HIGH : LOW);
   }
+  if (selectingMode) {
+    fanOn = false;
+    digitalWrite(fanPin, LOW);
+  }
 
   // Light pushbutton (short press = toggle, long press = back to LDR) 
   bool buttonState = digitalRead(buttonPin);   // LOW = pressed (INPUT_PULLUP)
@@ -378,10 +382,16 @@ void loop() {
       indoorLightState = false;
     }
 
+
     // button decides if manual control is on, otherwise the LDR decides
     bool finalLightState = manualControl ? manualState : indoorLightState;
 
     digitalWrite(indoorLedPin, finalLightState ? HIGH : LOW);
+  }
+  if (currentMode == selectingMode){
+    
+    digitalWrite(indoorLedPin, LOW);
+
   }
 
   //Buzzer
