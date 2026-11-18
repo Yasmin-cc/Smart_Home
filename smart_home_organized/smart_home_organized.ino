@@ -11,7 +11,7 @@ enum HouseMode {
   SLEEP_MODE
 };
 
-HouseMode currentMode = HOME_MODE;
+HouseMode currentMode = AWAY_MODE;
 
 // ------ PINS ------
 //Keypad 
@@ -98,7 +98,7 @@ Servo doorServo;
 
 bool doorUnlocked = false;
 unsigned long unlockTime = 0;
-const unsigned long openTime = 5000;
+const unsigned long openTime = 5000; //how long door should stay open
 
 // --------- SECURITY -----------
 bool windowOpen = false;
@@ -388,7 +388,7 @@ void loop() {
 
     digitalWrite(indoorLedPin, finalLightState ? HIGH : LOW);
   }
-  if (currentMode == selectingMode){
+  if (selectingMode){
     
     digitalWrite(indoorLedPin, LOW);
 
