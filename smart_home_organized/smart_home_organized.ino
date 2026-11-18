@@ -103,7 +103,6 @@ const unsigned long openTime = 5000; //how long door should stay open
 // --------- SECURITY -----------
 bool windowOpen = false;
 bool windowAlarm = false;      // stays true until the correct PIN is entered
-bool securityBreach = false;
 
 // ----------- LIGHTING -------------
 const int onThreshold = 600;
@@ -176,7 +175,7 @@ void applyMode(HouseMode mode) {
     doorServo.write(0);
     doorUnlocked = false;
 
-    showMessage("SLEEP MODE ACTIVE", "Security ON", 2000);
+    showMessage("SLEEP MODE ON", "Security ON", 2000);
   }
 }
 
@@ -293,7 +292,7 @@ void loop() {
   if (securityEnabled && windowOpen && !selectingMode) { //window alarm rings when mode selection mode is not open
     windowAlarm = true;
   }
-  securityBreach = windowAlarm;
+  
 
   //exterior motion light
   bool motionDetected = (digitalRead(pirPin) == HIGH);
@@ -395,7 +394,7 @@ void loop() {
   }
 
   //Buzzer
-  if (passwordAlarm || securityBreach) {
+  if (passwordAlarm || windowAlarm) {
     tone(buzzerPin, 1000);
   }
   else {
@@ -403,7 +402,7 @@ void loop() {
   }
 
   // LCD status
-  if (securityBreach) {
+  if (windowAlarm) {
     // show the PIN so the user can silence the alarm
     if (enteredCode.length() > 0) {
       String stars = "";
@@ -413,12 +412,19 @@ void loop() {
       setScreen("SECURITY ALERT!", "PIN: " + stars);
     }
     else {
-      setScreen("SECURITY ALERT!", "Enter PIN to end");
+      setScreen("SECURITY ALERT!", "Enter PIN");
     }
   }
   else if (passwordAlarm) {
-    setScreen("ACCESS ALARM!", "Enter Correct Code");
+  if (enteredCode.length() > 0) {
+    String stars = "";
+    for (unsigned int i = 0; i < enteredCode.length(); i++) stars += '*';
+    setScreen("ACCESS ALARM!", "PIN: " + stars);
   }
+  else {
+    setScreen("ACCESS ALARM!", "Enter PIN");
+  }
+}
   else if (now < messageUntil) {
     // a pop-up message is still being shown; leave the screen alone
   }
@@ -436,7 +442,7 @@ void loop() {
     setScreen("Door: OPEN", "Closing soon...");
   }
   else if (currentMode == AWAY_MODE) {
-    setScreen("AWAY: Security ON", "Fan OFF Light OFF");
+    setScreen("AWAY:Security ON", "Fan OFF Lamp OFF");
   }
   else if (currentMode == SLEEP_MODE) {
     setScreen("SLEEP: Security",
@@ -446,6 +452,6 @@ void loop() {
   else {
     setScreen("HOME T:" + String(currentTemp, 0) + "C",
               "Set:" + String(currentSetpoint, 1) +
-              " Security: OFF");
+              " Sec:OFF");
   }
 }
