@@ -16,7 +16,7 @@ HouseMode currentMode = AWAY_MODE;
 // ------ PINS ------
 //Keypad 
 const byte ROWS = 4;
-const byte COLS = 4;
+const byte COLS = 3;
 
 byte rowPins[ROWS] = {2, 3, 4, 5};
 byte colPins[COLS] = {6, 7, 8};
